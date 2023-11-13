@@ -27,6 +27,11 @@ PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* stat
 	if (id_string == NULL || username == NULL || email == NULL){
 		return PREPARE_SYNTAX_ERROR;
 	}
+
+	int id_to_insert = atoi(id_string);
+	if (id_to_insert < 0){
+		return PREPARE_NEGATIVE_ID;
+	}
 	
 	if (strlen(username) > COLUMN_USERNAME_SIZE || strlen(email) > COLUMN_EMAIL_SIZE){
 		return PREPARE_COLUMN_SIZE_EXCEEDED;
@@ -35,7 +40,7 @@ PrepareStatementResult prepare_insert(InputBuffer* input_buffer, Statement* stat
 	statement->type = STATEMENT_INSERT;
 
 	Row* row_to_insert = &(statement->row_to_insert);
-	row_to_insert->id = atoi(id_string);
+	row_to_insert->id = id_to_insert;
 	strcpy(row_to_insert->username, username);
 	strcpy(row_to_insert->email, email);
 	

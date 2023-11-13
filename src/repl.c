@@ -36,6 +36,9 @@ int main(int argc, char* argv[]){
 			case (PREPARE_SYNTAX_ERROR):
 				printf("Syntax Error !\n");
 				continue;
+			case(PREPARE_NEGATIVE_ID):
+				printf("Cannot insert a negative id !\n");
+				continue;
 			case (PREPARE_COLUMN_SIZE_EXCEEDED):
 				printf("Column size exceeded !\n");
 				continue;
