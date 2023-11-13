@@ -5,7 +5,8 @@
 typedef enum {
 	PREPARE_SUCCESS,
 	PREPARE_UNRECOGNIZED_STATEMENT,
-	PREPARE_SYNTAX_ERROR
+	PREPARE_SYNTAX_ERROR,
+	PREPARE_COLUMN_SIZE_EXCEEDED
 } PrepareStatementResult;
 
 typedef enum {
@@ -24,6 +25,7 @@ typedef enum {
 } ExecuteResult;
 
 PrepareStatementResult prepare_statement(InputBuffer*, Statement*);
+PrepareStatementResult prepare_insert(InputBuffer*, Statement*);
 ExecuteResult exec_statement(Statement*, Table*);
 ExecuteResult exec_insert(Statement*, Table*);
 ExecuteResult exec_select(Table*);

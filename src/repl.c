@@ -33,6 +33,12 @@ int main(int argc, char* argv[]){
 			case (PREPARE_UNRECOGNIZED_STATEMENT):
 				printf("Unrecoginized keyword at the start of %s.\n", input_buffer->buffer);
 				continue;
+			case (PREPARE_SYNTAX_ERROR):
+				printf("Syntax Error !\n");
+				continue;
+			case (PREPARE_COLUMN_SIZE_EXCEEDED):
+				printf("Column size exceeded !\n");
+				continue;
 		}
 
 		switch (exec_statement(&statement, table)) {

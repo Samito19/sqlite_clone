@@ -12,6 +12,7 @@ InputBuffer* new_input_buffer(){
 	return input_buffer;
 }
 
+/* Read input from the repl command line */
 void read_input(InputBuffer* input_buffer){
 	ssize_t bytes_read = getline(&(input_buffer->buffer), &(input_buffer->b_length), stdin);
 	
