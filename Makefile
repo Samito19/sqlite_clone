@@ -5,4 +5,4 @@ SRC = src
 SRCS = $(wildcard $(SRC)/*.c)
 
 main: 
-	$(CC) $(CFLAGS) -o repl $(SRCS) && ./repl
+	$(CC) $(CFLAGS) -o repl $(SRCS) && ./repl users.db

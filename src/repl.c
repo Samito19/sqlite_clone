@@ -9,8 +9,16 @@
 #include "table.h"
 
 int main(int argc, char* argv[]){
+
+	if (argc < 2){
+		printf("Please supply a filename !\n");
+		exit(EXIT_FAILURE);
+	}
+
+	char* filename = argv[1];
+	Table* table = open_db(filename);	
+		
 	InputBuffer* input_buffer = new_input_buffer();
-	Table* table = new_table();	
 
 	while (true){
 		printf("db > ");
