@@ -65,8 +65,10 @@ ExecuteResult exec_insert(Statement* statement, Table* table){
 
 	/* Store the row in memory */
 	Row* row_to_insert = &(statement->row_to_insert);
-	serialize_row(row_to_insert, find_row_slot(table, table->num_rows));
+	Cursor* cursor = table_end(table);
+	serialize_row(row_to_insert, cursor_value(cursor));
 	table->num_rows += 1;
+	free(cursor);
 
 	return EXECUTE_SUCCESS;
 }
@@ -77,12 +79,16 @@ void print_row(Row* row){
 
 ExecuteResult exec_select(Table* table){
 	Row row;
+	Cursor* cursor = table_start(table);
 
 	/* Retrieve and deserialize every row from memory */
-	for (int row_num = 0; row_num < table->num_rows; row_num++){
-		deserialize_row(find_row_slot(table, row_num), &row);
+	while (!(cursor->end_of_table)){
+		deserialize_row(cursor_value(cursor), &row);
 		print_row(&row);
+		cursor_advance(cursor);
 	}
+
+	free(cursor);
 
 	if (table->num_rows == 0){
 		printf("The table is empty.\n");

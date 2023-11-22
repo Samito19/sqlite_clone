@@ -3,6 +3,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdbool.h>
 #include "table.h"
 
 #define MAX_TABLE_PAGES 100
@@ -58,15 +59,41 @@ void db_close(Table* table){
 	free(table);
 }
 
+Cursor* table_start(Table* table){
+	Cursor* cursor = malloc(sizeof(Cursor));
+	cursor->table = table;
+	cursor->row_num = 0;
+	cursor->end_of_table = (table->num_rows == 0);
+
+	return cursor;
+}
+
+Cursor* table_end(Table* table){
+	Cursor* cursor = malloc(sizeof(Cursor));
+	cursor->table = table;
+	cursor->row_num = table->num_rows;
+	cursor->end_of_table = true;
+
+	return cursor;
+}
+
 /* This function allows us to find the slot of a row in a table by calculating the offset */
-void* find_row_slot(Table* table, uint32_t row_num){
-	/*Calculate the next non-full page available and store its memory address */
+void* cursor_value(Cursor* cursor){
+	/*Calculate the next non-full page available and store its memory address */ 
+	uint32_t row_num = cursor->row_num;
 	uint32_t page_num = row_num / ROWS_PER_PAGE;
-	void* page = get_page(table->pager, page_num);
+	void* page = get_page(cursor->table->pager, page_num);
 	uint32_t row_offset = row_num % ROWS_PER_PAGE;
 	uint32_t byte_offset = row_offset * ROW_SIZE;
 
 	return page + byte_offset;
+}
+
+void cursor_advance(Cursor* cursor){
+	cursor->row_num += 1;
+	if (cursor->row_num >= cursor->table->num_rows){
+		cursor->end_of_table = true;
+	}
 }
 
 /* We use a pager to abstract the process of retrieving data. 
@@ -133,7 +160,7 @@ void* get_page(Pager* pager, uint32_t page_num) {
     		if (page_num <= num_pages) {
 	      		lseek(pager->file_descriptor, page_num * PAGE_SIZE, SEEK_SET);
 		      	ssize_t bytes_read = read(pager->file_descriptor, page, PAGE_SIZE);
-		      	if (bytes_read == -1) {
+			if (bytes_read == -1) {
 				printf("Error reading file: %d\n", errno);
 				exit(EXIT_FAILURE);
 		      	}

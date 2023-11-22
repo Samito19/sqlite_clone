@@ -19,8 +19,8 @@ const uint32_t MAX_TABLE_ROWS = MAX_TABLE_PAGES * ROWS_PER_PAGE;
 
 void serialize_row(Row* source, void* destination){
 	memcpy(destination + ID_OFFSET, &(source->id), ID_SIZE);
-	strcpy(destination + USERNAME_OFFSET, &(source->username), USERNAME_SIZE);
-	strcpy(destination + EMAIL_OFFSET, &(source->email), EMAIL_SIZE);
+	strcpy(destination + USERNAME_OFFSET, source->username);
+	strcpy(destination + EMAIL_OFFSET, source->email);
 }
 	
 void deserialize_row(void* source, Row* destination){

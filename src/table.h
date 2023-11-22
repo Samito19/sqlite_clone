@@ -2,7 +2,9 @@
 #define TABLE_H
 
 #include <stdlib.h>
+#include <stdbool.h>
 #include "serializer.h"
+
 
 typedef struct {
 	int file_descriptor;
@@ -15,9 +17,18 @@ typedef struct {
 	Pager* pager;
 } Table;
 
+typedef struct {
+	Table* table;
+	uint32_t row_num;
+	bool end_of_table;
+} Cursor;
+
 Table* open_db(const char*);
 void db_close(Table*);
-void* find_row_slot(Table*, uint32_t);
+Cursor* table_start(Table*);
+Cursor* table_end(Table*);
+void* cursor_value(Cursor*);
+void cursor_advance(Cursor*);
 Pager* pager_open(const char*);
 void pager_flush(Pager*, uint32_t, uint32_t);
 void* get_page(Pager*, uint32_t);
